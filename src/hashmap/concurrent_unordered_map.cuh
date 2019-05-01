@@ -354,16 +354,16 @@ public:
     {
         m_hashtbl_values = m_allocator.allocate( m_hashtbl_capacity );
         constexpr int block_size = 128;
-        {
-            cudaPointerAttributes hashtbl_values_ptr_attributes;
-            cudaError_t status = cudaPointerGetAttributes( &hashtbl_values_ptr_attributes, m_hashtbl_values );
+        // {
+        //     cudaPointerAttributes hashtbl_values_ptr_attributes;
+        //     cudaError_t status = cudaPointerGetAttributes( &hashtbl_values_ptr_attributes, m_hashtbl_values );
             
-            if ( cudaSuccess == status && hashtbl_values_ptr_attributes.isManaged ) {
-                int dev_id = 0;
-                CUDA_RT_CALL( cudaGetDevice( &dev_id ) );
-                CUDA_RT_CALL( cudaMemPrefetchAsync(m_hashtbl_values, m_hashtbl_size*sizeof(value_type), dev_id, 0) );
-            }
-        }
+        //     if ( cudaSuccess == status && hashtbl_values_ptr_attributes.isManaged ) {
+        //         int dev_id = 0;
+        //         CUDA_RT_CALL( cudaGetDevice( &dev_id ) );
+        //         CUDA_RT_CALL( cudaMemPrefetchAsync(m_hashtbl_values, m_hashtbl_size*sizeof(value_type), dev_id, 0) );
+        //     }
+        // }
         
         init_hashtbl<<<((m_hashtbl_size-1)/block_size)+1,block_size>>>( m_hashtbl_values, m_hashtbl_size, unused_key, m_unused_element );
         CUDA_RT_CALL( cudaGetLastError() );
@@ -665,13 +665,13 @@ public:
     
     void prefetch( const int dev_id, cudaStream_t stream = 0 )
     {
-        cudaPointerAttributes hashtbl_values_ptr_attributes;
-        cudaError_t status = cudaPointerGetAttributes( &hashtbl_values_ptr_attributes, m_hashtbl_values );
+        // cudaPointerAttributes hashtbl_values_ptr_attributes;
+        // cudaError_t status = cudaPointerGetAttributes( &hashtbl_values_ptr_attributes, m_hashtbl_values );
         
-        if ( cudaSuccess == status && hashtbl_values_ptr_attributes.isManaged ) {
-            CUDA_RT_CALL( cudaMemPrefetchAsync(m_hashtbl_values, m_hashtbl_size*sizeof(value_type), dev_id, stream) );
-        }
-        CUDA_RT_CALL( cudaMemPrefetchAsync(this, sizeof(*this), dev_id, stream) );
+        // if ( cudaSuccess == status && hashtbl_values_ptr_attributes.isManaged ) {
+        //     CUDA_RT_CALL( cudaMemPrefetchAsync(m_hashtbl_values, m_hashtbl_size*sizeof(value_type), dev_id, stream) );
+        // }
+        // CUDA_RT_CALL( cudaMemPrefetchAsync(this, sizeof(*this), dev_id, stream) );
     }
     
 private:
